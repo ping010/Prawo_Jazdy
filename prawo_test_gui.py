@@ -6,8 +6,6 @@ from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
 from PyQt5.QtWidgets import QMainWindow,QWidget, QPushButton, QAction, QMessageBox
 from PyQt5.QtGui import QIcon
 import sys
-import random
-import mysql.connector
 from prawo_test import pytanie, media, nr_pytan, odpowiedz_a, odpowiedz_b, odpowiedz_c, poprawna_odpowiedz
 
 class VideoWindow(QMainWindow):
