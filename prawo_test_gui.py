@@ -14,7 +14,7 @@ class VideoWindow(QMainWindow):
 
     def __init__(self, parent=None):
         super(VideoWindow, self).__init__(parent)
-        self.setWindowTitle("PyQt Video Player Widget Example - pythonprogramminglanguage.com") 
+        self.setWindowTitle("Prawo Jazdy") 
 
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
@@ -27,10 +27,23 @@ class VideoWindow(QMainWindow):
             20 : "", 21 : "", 22 : "", 23 : "", 24 : "", 25 : "", 26 : "", 27 : "", 28 : "", 29 : "", 30 : "", 31 : "", 32 : "", 33 : "", 34 : "", 35 : "", 36 : "", 37 : "", 38 : "", 39 : ""
         }
 
+        self.poprawne_odpowiedzi = {
+            0 : "", 1 : "", 2 : "", 3 : "", 4 : "", 5 : "", 6 : "", 7 : "", 8 : "", 9 : "", 10 : "", 11 : "", 12 : "", 13 : "", 14 : "", 15 : "", 16 : "", 17 : "", 18 : "", 19 : "",
+            20 : "", 21 : "", 22 : "", 23 : "", 24 : "", 25 : "", 26 : "", 27 : "", 28 : "", 29 : "", 30 : "", 31 : "", 32 : "", 33 : "", 34 : "", 35 : "", 36 : "", 37 : "", 38 : "", 39 : ""
+        }
+
+        for i in range(40):
+            self.poprawne_odpowiedzi[i] = str(poprawna_odpowiedz[nr_pytan[i]]).strip("(),'")
+
         self.playButton = QPushButton()
         self.playButton.setEnabled(False)
         self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.playButton.clicked.connect(self.play)
+
+        self.showAnsButton = QPushButton()
+        self.showAnsButton.setText("Sprawdź odpowiedź")
+        self.showAnsButton.setFixedWidth(120)
+        self.showAnsButton.clicked.connect(self.show_ans)
 
         self.answerButton1 = QCheckBox()
         self.answerButton2 = QCheckBox()
@@ -55,9 +68,16 @@ class VideoWindow(QMainWindow):
         self.positionSlider.setRange(0, 0)
         self.positionSlider.sliderMoved.connect(self.setPosition)
 
+        self.nr_pytaniaLabel = QLabel()
+        self.nr_pytaniaLabel.setAlignment(Qt.AlignCenter)
+        self.nr_pytaniaLabel.setFixedHeight(20)
         self.questionLabel = QLabel()
+        self.questionLabel.setFixedHeight(20)
+        self.ilosc_pytan = QLabel()
+        self.ilosc_pytan.setAlignment(Qt.AlignCenter)
 
         self.errorLabel = QLabel()
+        self.errorLabel.setHidden(True)
         self.errorLabel.setSizePolicy(QSizePolicy.Preferred,
                 QSizePolicy.Maximum)
 
@@ -90,30 +110,41 @@ class VideoWindow(QMainWindow):
         controlLayout.addWidget(self.playButton)
         controlLayout.addWidget(self.positionSlider)
 
+        questionLayout = QHBoxLayout()
+        questionLayout.setContentsMargins(0, 0, 0, 0)
+        questionLayout.addWidget(self.previous_question)
+        questionLayout.addWidget(self.ilosc_pytan)
+        questionLayout.addWidget(self.next_question)
+
+        okLayout = QHBoxLayout()
+        okLayout.setContentsMargins(0, 0, 0, 0)
+        okLayout.addWidget(self.questionLabel)
+        okLayout.addWidget(self.showAnsButton)
+
         answerLayout = QHBoxLayout()
         answerLayout.setContentsMargins(0, 0, 0, 0)
-        answerLayout.addWidget(self.previous_question)
         answerLayout.addWidget(self.answerButton1)
         answerLayout.addWidget(self.answerButton2)
         answerLayout.addWidget(self.answerButton3)
-        answerLayout.addWidget(self.next_question)
 
         endLayout = QHBoxLayout()
         endLayout.addWidget(self.endButton)
 
         layout = QVBoxLayout()
+        layout.addLayout(endLayout)
+        layout.addSpacing(50)
+        layout.addWidget(self.nr_pytaniaLabel)
         layout.addWidget(videoWidget)
         layout.addLayout(controlLayout)
         layout.addWidget(self.errorLabel)
-        layout.addWidget(self.questionLabel)
+        layout.addLayout(okLayout)
         layout.addLayout(answerLayout)
         layout.addSpacing(50)
-        layout.addLayout(endLayout)
+        layout.addLayout(questionLayout)
+        
 
         # Set widget to contain window contents
         wid.setLayout(layout)
-
-        self.refresh()
 
         self.mediaPlayer.setVideoOutput(videoWidget)
         self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
@@ -127,6 +158,8 @@ class VideoWindow(QMainWindow):
             self.mediaPlayer.setMedia(
                     QMediaContent(QUrl.fromLocalFile(f'wizualizacje/{video}')))
             self.playButton.setEnabled(True)
+            if("jpg" in video):
+                self.playButton.click()
 
     def exitCall(self):
         sys.exit(app.exec_())
@@ -177,7 +210,18 @@ class VideoWindow(QMainWindow):
         self.answerButton1.setChecked(False)
         self.answerButton2.setChecked(False)
 
+    def show_ans(self):
+        ans = QMessageBox()
+        ans.setWindowTitle("Odpowiedź")
+        ans.setText(f"Poprawna odpowiedź:\n{self.poprawne_odpowiedzi[self.numer_pytania]}")
+        ans.exec_()
+
     def refresh(self):
+        self.nr_pytaniaLabel.setText(f"Pytanie {self.numer_pytania+1}")
+
+        #odmiany
+        self.ilosc_pytan.setText(f"Pozostał{"o" if not ((4 >=(40-self.numer_pytania) % 10 >= 2) and not(14 >= 40-self.numer_pytania >= 12)) else "y"} {40-self.numer_pytania} {'pytań' if( (((40-self.numer_pytania) % 10) >= 5 or 1>=(40-self.numer_pytania)%10>=0 or (20>=40-self.numer_pytania >= 10)) and (40-self.numer_pytania != 1)) else "pytania" if(40-self.numer_pytania != 1) else "pytanie"}")
+        
         self.question = str(pytanie[nr_pytan[self.numer_pytania]]).strip("(),'")
         self.odpowiedz_a = str(odpowiedz_a[nr_pytan[self.numer_pytania]]).strip("(),'")
         self.odpowiedz_b = str(odpowiedz_b[nr_pytan[self.numer_pytania]]).strip("(),'")
@@ -215,21 +259,25 @@ class VideoWindow(QMainWindow):
             elif(self.odpowiedzi_uzytkownika[self.numer_pytania] == "C" or self.odpowiedzi_uzytkownika[self.numer_pytania] == "Nie"):
                 self.answerButton3.setChecked(True)
 
-        print(self.odpowiedzi_uzytkownika)
+        # print(self.odpowiedzi_uzytkownika)
 
         self.errorLabel.setText('')
+        self.errorLabel.setHidden(True)
 
         self.openFile()
 
     def show_marks(self):
         punkty = 0
+        text = ""
         for i in range(40):
+            text += str(i+1) + "." + " Twoja odpowiedź: "+ str(self.odpowiedzi_uzytkownika[i]) + "\n" + "Poprawna odpowiedź: " + str(self.poprawne_odpowiedzi[i]) + "\n\n"
             if(str(poprawna_odpowiedz[nr_pytan[i]]).strip("(),'") == self.odpowiedzi_uzytkownika[i]):
                 punkty += 1
 
         wyniki = QMessageBox()
         wyniki.setWindowTitle("Wyniki")
         wyniki.setText(f'{punkty}/40, czyli {float(punkty/40)*100}%')
+        wyniki.setDetailedText(text)
         wyniki.exec_()
 
     def play(self):
@@ -257,11 +305,13 @@ class VideoWindow(QMainWindow):
 
     def handleError(self):
         self.playButton.setEnabled(False)
+        self.errorLabel.setHidden(False)
         self.errorLabel.setText("Brak mediów do tego pytania.")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     player = VideoWindow()
-    player.resize(640, 480)
+    player.resize(1920, 1080)
     player.show()
+    player.refresh()
     sys.exit(app.exec_())

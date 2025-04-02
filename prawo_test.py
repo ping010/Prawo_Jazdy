@@ -48,6 +48,7 @@ is_changed = False
 nr_pytan = []
 for _ in range(40):
           i = random.randint(0,2014)
+          is_changed = False
           while(not is_changed):
                     if(i not in nr_pytan):
                               is_changed = True
