@@ -1,11 +1,13 @@
-import mysql.connector
+import mariadb
 import random
+
 #Connecting with mysql
-db = mysql.connector.connect(
-          host="localhost",
+db = mariadb.connect(
+          host="127.0.0.1",
           user="root",
-          passwd="Ezmysql@1",
-          database="producto"
+          passwd="Ezmariadb@1",
+          database="mysql",
+          port=3307
 )
 
 #Adding a mysql cursor
@@ -53,3 +55,4 @@ for _ in range(40):
                               i = random.randint(0,2014)
           nr_pytan.append(i)
 print(str(media[nr_pytan[0]]).strip("(),'"))
+# db.close()
