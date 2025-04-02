@@ -3,8 +3,8 @@ from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
         QPushButton, QSizePolicy, QSlider, QStyle, QVBoxLayout, QWidget, QCheckBox)
-from PyQt5.QtWidgets import QMainWindow,QWidget, QPushButton, QAction, QMessageBox
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow,QWidget, QPushButton, QAction, QMessageBox, QTextEdit
+from PyQt5.QtGui import QIcon, QFont
 import sys
 from prawo_test import pytanie, media, nr_pytan, odpowiedz_a, odpowiedz_b, odpowiedz_c, poprawna_odpowiedz
 
@@ -68,9 +68,21 @@ class VideoWindow(QMainWindow):
 
         self.nr_pytaniaLabel = QLabel()
         self.nr_pytaniaLabel.setAlignment(Qt.AlignCenter)
-        self.nr_pytaniaLabel.setFixedHeight(20)
-        self.questionLabel = QLabel()
-        self.questionLabel.setFixedHeight(20)
+        self.nr_pytaniaLabel.setFixedHeight(30)
+        self.questionLabel = QLabel(wordWrap=True)
+        self.questionLabel.setMinimumHeight(50)
+        self.questionLabel.setMaximumHeight(100)
+
+        font = QFont()
+        font2 = QFont()
+        font.setPointSize(24)
+        font2.setPointSize(18)
+        self.questionLabel.setFont(font)
+        self.nr_pytaniaLabel.setFont(font2)
+        self.answerButton1.setFont(font)
+        self.answerButton2.setFont(font)
+        self.answerButton3.setFont(font)
+
         self.ilosc_pytan = QLabel()
         self.ilosc_pytan.setAlignment(Qt.AlignCenter)
 
@@ -136,7 +148,9 @@ class VideoWindow(QMainWindow):
         layout.addLayout(controlLayout)
         layout.addWidget(self.errorLabel)
         layout.addLayout(okLayout)
-        layout.addLayout(answerLayout)
+        layout.addWidget(self.answerButton1)
+        layout.addWidget(self.answerButton2)
+        layout.addWidget(self.answerButton3)
         layout.addSpacing(50)
         layout.addLayout(questionLayout)
         
@@ -209,16 +223,55 @@ class VideoWindow(QMainWindow):
         self.answerButton2.setChecked(False)
 
     def show_ans(self):
-        ans = QMessageBox()
-        ans.setWindowTitle("Odpowiedź")
-        ans.setText(f"Poprawna odpowiedź:\n{self.poprawne_odpowiedzi[self.numer_pytania]}")
-        ans.exec_()
+        self.answerButton1.setChecked(False)
+        self.answerButton2.setChecked(False)
+        self.answerButton3.setChecked(False)
+        if(self.poprawne_odpowiedzi[self.numer_pytania] == "A" or self.poprawne_odpowiedzi[self.numer_pytania] == "Tak"):
+            self.answerButton1.setChecked(True)
+            self.answerButton1.setStyleSheet(
+                "QCheckBox::pressed"
+                "{"
+                "background-color : lightgreen;"
+                "}"
+                "QCheckBox::checked"
+                "{"
+                "background-color : lightgreen;"
+                "}"
+            )
+        elif(self.poprawne_odpowiedzi[self.numer_pytania] == "B"):
+            self.answerButton2.setChecked(True)
+            self.answerButton2.setStyleSheet(
+                "QCheckBox::pressed"
+                "{"
+                "background-color : lightgreen;"
+                "}"
+                "QCheckBox::checked"
+                "{"
+                "background-color : lightgreen;"
+                "}"
+            )
+        elif(self.poprawne_odpowiedzi[self.numer_pytania] == "C" or self.poprawne_odpowiedzi[self.numer_pytania] == "Nie"):
+            self.answerButton3.setChecked(True)
+            self.answerButton3.setStyleSheet(
+                "QCheckBox::pressed"
+                "{"
+                "background-color : lightgreen;"
+                "}"
+                "QCheckBox::checked"
+                "{"
+                "background-color : lightgreen;"
+                "}"
+            )
+        # ans = QMessageBox()
+        # ans.setWindowTitle("Odpowiedź")
+        # ans.setText(f"Poprawna odpowiedź:\n{self.poprawne_odpowiedzi[self.numer_pytania]}")
+        # ans.exec_()
 
     def refresh(self):
         self.nr_pytaniaLabel.setText(f"Pytanie {self.numer_pytania+1}")
 
         #odmiany
-        self.ilosc_pytan.setText(f"Pozostał{"o" if not ((4 >=(40-self.numer_pytania) % 10 >= 2) and not(14 >= 40-self.numer_pytania >= 12)) else "y"} {40-self.numer_pytania} {'pytań' if( (((40-self.numer_pytania) % 10) >= 5 or 1>=(40-self.numer_pytania)%10>=0 or (20>=40-self.numer_pytania >= 10)) and (40-self.numer_pytania != 1)) else "pytania" if(40-self.numer_pytania != 1) else "pytanie"}")
+        self.ilosc_pytan.setText(f"Pozostał{"o" if not ((4 >=(39-self.numer_pytania) % 10 >= 2) and not(14 >= 39-self.numer_pytania >= 12)) else "y"} {39-self.numer_pytania} {'pytań' if( (((39-self.numer_pytania) % 10) >= 5 or 1>=(39-self.numer_pytania)%10>=0 or (20>=39-self.numer_pytania >= 10)) and (39-self.numer_pytania != 1)) else "pytania" if(39-self.numer_pytania != 1) else "pytanie"}")
         
         self.question = str(pytanie[nr_pytan[self.numer_pytania]]).strip("(),'")
         self.odpowiedz_a = str(odpowiedz_a[nr_pytan[self.numer_pytania]]).strip("(),'")
@@ -249,6 +302,41 @@ class VideoWindow(QMainWindow):
         self.answerButton2.setChecked(False)
         self.answerButton3.setChecked(False)
 
+        self.answerButton1.adjustSize()
+        self.answerButton2.adjustSize()
+        self.answerButton3.adjustSize()
+
+        self.answerButton1.setStyleSheet(
+                "QCheckBox::pressed"
+                "{"
+                "background-color : lightgray;"
+                "}"
+                "QCheckBox::checked"
+                "{"
+                "background-color : lightgray;"
+                "}"
+            )
+        self.answerButton2.setStyleSheet(
+                "QCheckBox::pressed"
+                "{"
+                "background-color : lightgray;"
+                "}"
+                "QCheckBox::checked"
+                "{"
+                "background-color : lightgray;"
+                "}"
+            )
+        self.answerButton3.setStyleSheet(
+                "QCheckBox::pressed"
+                "{"
+                "background-color : lightgray;"
+                "}"
+                "QCheckBox::checked"
+                "{"
+                "background-color : lightgray;"
+                "}"
+            )
+
         if(self.odpowiedzi_uzytkownika[self.numer_pytania] != ''):
             if(self.odpowiedzi_uzytkownika[self.numer_pytania] == "A" or self.odpowiedzi_uzytkownika[self.numer_pytania] == "Tak"):
                 self.answerButton1.setChecked(True)
@@ -265,6 +353,18 @@ class VideoWindow(QMainWindow):
         self.openFile()
 
     def show_marks(self):
+        if(self.odpowiedz_a == ''):
+            if(self.answerButton1.isChecked()):
+                self.odpowiedzi_uzytkownika[self.numer_pytania] = "Tak"
+            elif(self.answerButton3.isChecked()):
+                self.odpowiedzi_uzytkownika[self.numer_pytania] = "Nie"
+        else:
+            if(self.answerButton1.isChecked()):
+                self.odpowiedzi_uzytkownika[self.numer_pytania] = "A"
+            elif(self.answerButton2.isChecked()):
+                self.odpowiedzi_uzytkownika[self.numer_pytania] = "B"
+            elif(self.answerButton3.isChecked()):
+                self.odpowiedzi_uzytkownika[self.numer_pytania] = "C"
         punkty = 0
         text = ""
         for i in range(40):
@@ -274,8 +374,22 @@ class VideoWindow(QMainWindow):
 
         wyniki = QMessageBox()
         wyniki.setWindowTitle("Wyniki")
+        # wyniki.setStyleSheet(
+        #     "QLabel{min-width:640 px; font-size: 24px;} "
+        #     "QPushButton{ width:250px; font-size: 18px; } "
+        #     "QTextEdit { font-size: 24pt; min-width:480 px; }"
+        # )
         wyniki.setText(f'{punkty}/40, czyli {float(punkty/40)*100}%')
+
+        font = QFont()
+        font.setPointSize(24)
+        wyniki.setFont(font)
         wyniki.setDetailedText(text)
+
+        for widget in wyniki.findChildren(QTextEdit):
+            widget.setFont(QFont("Arial", 24))  # Set font size
+            widget.setFixedSize(400, 600)
+
         wyniki.exec_()
 
     def play(self):
