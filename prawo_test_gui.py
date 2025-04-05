@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QDir, Qt, QUrl
+from PyQt5.QtCore import QDir, Qt, QUrl, QTimer, QTime
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
@@ -22,15 +22,15 @@ class VideoWindow(QMainWindow):
 
         self.odpowiedzi_uzytkownika = {
             0 : "", 1 : "", 2 : "", 3 : "", 4 : "", 5 : "", 6 : "", 7 : "", 8 : "", 9 : "", 10 : "", 11 : "", 12 : "", 13 : "", 14 : "", 15 : "", 16 : "", 17 : "", 18 : "", 19 : "",
-            20 : "", 21 : "", 22 : "", 23 : "", 24 : "", 25 : "", 26 : "", 27 : "", 28 : "", 29 : "", 30 : "", 31 : "", 32 : "", 33 : "", 34 : "", 35 : "", 36 : "", 37 : "", 38 : "", 39 : ""
+            20 : "", 21 : "", 22 : "", 23 : "", 24 : "", 25 : "", 26 : "", 27 : "", 28 : "", 29 : "", 30 : "", 31 : ""
         }
 
         self.poprawne_odpowiedzi = {
             0 : "", 1 : "", 2 : "", 3 : "", 4 : "", 5 : "", 6 : "", 7 : "", 8 : "", 9 : "", 10 : "", 11 : "", 12 : "", 13 : "", 14 : "", 15 : "", 16 : "", 17 : "", 18 : "", 19 : "",
-            20 : "", 21 : "", 22 : "", 23 : "", 24 : "", 25 : "", 26 : "", 27 : "", 28 : "", 29 : "", 30 : "", 31 : "", 32 : "", 33 : "", 34 : "", 35 : "", 36 : "", 37 : "", 38 : "", 39 : ""
+            20 : "", 21 : "", 22 : "", 23 : "", 24 : "", 25 : "", 26 : "", 27 : "", 28 : "", 29 : "", 30 : "", 31 : ""
         }
 
-        for i in range(40):
+        for i in range(32):
             self.poprawne_odpowiedzi[i] = str(poprawna_odpowiedz[nr_pytan[i]]).strip("(),'")
 
         self.playButton = QPushButton()
@@ -40,8 +40,12 @@ class VideoWindow(QMainWindow):
 
         self.showAnsButton = QPushButton()
         self.showAnsButton.setText("Sprawdź odpowiedź")
-        self.showAnsButton.setFixedWidth(120)
+        self.showAnsButton.setFixedWidth(360)
         self.showAnsButton.clicked.connect(self.show_ans)
+
+        self.changeModeButton = QPushButton()
+        self.changeModeButton.setText("Tryb testu")
+        self.changeModeButton.setCheckable(True)
 
         self.answerButton1 = QCheckBox()
         self.answerButton2 = QCheckBox()
@@ -77,6 +81,11 @@ class VideoWindow(QMainWindow):
         font2 = QFont()
         font.setPointSize(24)
         font2.setPointSize(18)
+        self.showAnsButton.setFont(font)
+        self.previous_question.setFont(font)
+        self.next_question.setFont(font)
+        self.endButton.setFont(font)
+        self.changeModeButton.setFont(font)
         self.questionLabel.setFont(font)
         self.nr_pytaniaLabel.setFont(font2)
         self.answerButton1.setFont(font)
@@ -85,6 +94,19 @@ class VideoWindow(QMainWindow):
 
         self.ilosc_pytan = QLabel()
         self.ilosc_pytan.setAlignment(Qt.AlignCenter)
+        self.ilosc_pytan.setFont(font2)
+
+        self.globalnyCzas = QLabel()
+        self.globalnyCzas.setAlignment(Qt.AlignCenter)
+        self.globalnyCzas.setFont(font2)
+        self.globalnyCzas.setHidden(True)
+        self.globalnyCzas.setFixedHeight(30)
+
+        self.pytanieCzas = QLabel()
+        self.pytanieCzas.setAlignment(Qt.AlignCenter)
+        self.pytanieCzas.setFont(font2)
+        self.pytanieCzas.setFixedHeight(30)
+        self.pytanieCzas.setHidden(True)
 
         self.errorLabel = QLabel()
         self.errorLabel.setHidden(True)
@@ -130,6 +152,7 @@ class VideoWindow(QMainWindow):
         okLayout.setContentsMargins(0, 0, 0, 0)
         okLayout.addWidget(self.questionLabel)
         okLayout.addWidget(self.showAnsButton)
+        okLayout.addWidget(self.pytanieCzas)
 
         answerLayout = QHBoxLayout()
         answerLayout.setContentsMargins(0, 0, 0, 0)
@@ -138,11 +161,13 @@ class VideoWindow(QMainWindow):
         answerLayout.addWidget(self.answerButton3)
 
         endLayout = QHBoxLayout()
+        endLayout.addWidget(self.changeModeButton)
         endLayout.addWidget(self.endButton)
 
         layout = QVBoxLayout()
         layout.addLayout(endLayout)
         layout.addSpacing(50)
+        layout.addWidget(self.globalnyCzas)
         layout.addWidget(self.nr_pytaniaLabel)
         layout.addWidget(videoWidget)
         layout.addLayout(controlLayout)
@@ -158,6 +183,7 @@ class VideoWindow(QMainWindow):
         # Set widget to contain window contents
         wid.setLayout(layout)
 
+        self.changeModeButton.pressed.connect(self.testMode)
         self.mediaPlayer.setVideoOutput(videoWidget)
         self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
@@ -175,6 +201,46 @@ class VideoWindow(QMainWindow):
 
     def exitCall(self):
         sys.exit(app.exec_())
+
+    def testMode(self):
+        if(not self.changeModeButton.isChecked()):
+            self.showAnsButton.setHidden(True)
+            self.previous_question.setHidden(True)
+            self.pytanieCzas.setHidden(False)
+            self.globalnyCzas.setHidden(False)
+            self.timer = QTimer()
+            self.timerGlobal = QTimer()
+            self.timerQuestion = QTimer()
+
+            self.timeGlobal = QTime(00,25,00)
+            self.timeQuestion = QTime(00,00,35)
+
+            self.timer.start(1000)
+            self.timer.timeout.connect(self.addSec)
+
+            self.timerQuestion.start(35_000)
+            self.timerGlobal.start(1_500_000)
+
+            self.globalnyCzas.setText(self.timeGlobal.toString("mm:ss"))
+            self.pytanieCzas.setText(self.timeQuestion.toString("mm:ss"))
+
+            self.timerGlobal.timeout.connect(lambda: self.endButton.click())
+            self.timerQuestion.timeout.connect(lambda: self.next_question.click())
+        else:
+            self.timer.stop()
+            self.timerGlobal.stop()
+            self.timerQuestion.stop()
+
+            self.showAnsButton.setHidden(False)
+            self.previous_question.setHidden(False)
+            self.pytanieCzas.setHidden(True)
+            self.globalnyCzas.setHidden(True)
+
+    def addSec(self):
+        self.timeGlobal = self.timeGlobal.addSecs(-1)
+        self.timeQuestion = self.timeQuestion.addSecs(-1)
+        self.globalnyCzas.setText(self.timeGlobal.toString("mm:ss"))
+        self.pytanieCzas.setText(self.timeQuestion.toString("mm:ss"))
 
     def previous(self):
         if(self.odpowiedz_a == ''):
@@ -206,6 +272,11 @@ class VideoWindow(QMainWindow):
                 self.odpowiedzi_uzytkownika[self.numer_pytania] = "B"
             elif(self.answerButton3.isChecked()):
                 self.odpowiedzi_uzytkownika[self.numer_pytania] = "C"
+
+        if(self.changeModeButton.isChecked()):
+            self.timerQuestion.start(35_000)
+            self.timer.start(1000)
+            self.timeQuestion = QTime(00,00,35)
                 
         self.numer_pytania += 1
         self.refresh()
@@ -271,7 +342,7 @@ class VideoWindow(QMainWindow):
         self.nr_pytaniaLabel.setText(f"Pytanie {self.numer_pytania+1}")
 
         #odmiany
-        self.ilosc_pytan.setText(f"Pozostał{"o" if not ((4 >=(39-self.numer_pytania) % 10 >= 2) and not(14 >= 39-self.numer_pytania >= 12)) else "y"} {39-self.numer_pytania} {'pytań' if( (((39-self.numer_pytania) % 10) >= 5 or 1>=(39-self.numer_pytania)%10>=0 or (20>=39-self.numer_pytania >= 10)) and (39-self.numer_pytania != 1)) else "pytania" if(39-self.numer_pytania != 1) else "pytanie"}")
+        self.ilosc_pytan.setText(f"Pozostał{"o" if not ((4 >=(31-self.numer_pytania) % 10 >= 2) and not(14 >= 31-self.numer_pytania >= 12)) else "y"} {31-self.numer_pytania} {'pytań' if( (((31-self.numer_pytania) % 10) >= 5 or 1>=(31-self.numer_pytania)%10>=0 or (20>=31-self.numer_pytania >= 10)) and (31-self.numer_pytania != 1)) else "pytania" if(31-self.numer_pytania != 1) else "pytanie"}")
         
         self.question = str(pytanie[nr_pytan[self.numer_pytania]]).strip("(),'")
         self.odpowiedz_a = str(odpowiedz_a[nr_pytan[self.numer_pytania]]).strip("(),'")
@@ -292,7 +363,7 @@ class VideoWindow(QMainWindow):
         
         if(self.numer_pytania == 0):
             self.previous_question.setEnabled(False)
-        elif(self.numer_pytania == 39):
+        elif(self.numer_pytania == 31):
             self.next_question.setEnabled(False)
         else:
             self.next_question.setEnabled(True)
@@ -367,7 +438,7 @@ class VideoWindow(QMainWindow):
                 self.odpowiedzi_uzytkownika[self.numer_pytania] = "C"
         punkty = 0
         text = ""
-        for i in range(40):
+        for i in range(32):
             text += str(i+1) + "." + " Twoja odpowiedź: "+ str(self.odpowiedzi_uzytkownika[i]) + "\n" + "Poprawna odpowiedź: " + str(self.poprawne_odpowiedzi[i]) + "\n\n"
             if(str(poprawna_odpowiedz[nr_pytan[i]]).strip("(),'") == self.odpowiedzi_uzytkownika[i]):
                 punkty += 1
@@ -379,7 +450,7 @@ class VideoWindow(QMainWindow):
         #     "QPushButton{ width:250px; font-size: 18px; } "
         #     "QTextEdit { font-size: 24pt; min-width:480 px; }"
         # )
-        wyniki.setText(f'{punkty}/40, czyli {float(punkty/40)*100}%')
+        wyniki.setText(f'{punkty}/32, czyli {float(punkty/32)*100}%')
 
         font = QFont()
         font.setPointSize(24)
@@ -423,7 +494,7 @@ class VideoWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     player = VideoWindow()
-    player.resize(1920, 1080)
+    player.resize(1920,1080)
     player.show()
     player.refresh()
     sys.exit(app.exec_())

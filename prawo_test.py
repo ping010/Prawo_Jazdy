@@ -42,18 +42,34 @@ cursor.execute("SELECT `Poprawna odp` FROM pytania_egzminacyjne WHERE Kategorie 
 for po in cursor:
           poprawna_odpowiedz.append(po)
 
-#Selecting 40 random questions
+#Selecting 32 random questions
 print(str(media[0]).strip("(),"))
 is_changed = False
 nr_pytan = []
-for _ in range(40):
-          i = random.randint(0,2014)
+for _ in range(20):
+          i = random.randint(0,2017)
           is_changed = False
           while(not is_changed):
                     if(i not in nr_pytan):
-                              is_changed = True
+                              if(str(str(poprawna_odpowiedz[i]).strip("(),'")).strip("(),'") == "Tak" or str(poprawna_odpowiedz[i]).strip("(),'") == "Nie"):
+                                        is_changed = True
+                              else:
+                                        i = random.randint(0,2017)
                     else:
-                              i = random.randint(0,2014)
+                              i = random.randint(0,2017)
+          nr_pytan.append(i)
+
+for _ in range(12):
+          i = random.randint(0,2017)
+          is_changed = False
+          while(not is_changed):
+                    if(i not in nr_pytan):
+                              if(str(poprawna_odpowiedz[i]).strip("(),'") == "A" or str(poprawna_odpowiedz[i]).strip("(),'") == "B" or str(poprawna_odpowiedz[i]).strip("(),'") == "C"):
+                                        is_changed = True
+                              else:
+                                        i = random.randint(0,2017)
+                    else:
+                              i = random.randint(0,2017)
           nr_pytan.append(i)
 print(str(media[nr_pytan[0]]).strip("(),'"))
 # db.close()
