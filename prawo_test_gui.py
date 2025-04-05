@@ -277,6 +277,8 @@ class VideoWindow(QMainWindow):
             self.timerQuestion.start(35_000)
             self.timer.start(1000)
             self.timeQuestion = QTime(00,00,35)
+            self.globalnyCzas.setText(self.timeGlobal.toString("mm:ss"))
+            self.pytanieCzas.setText(self.timeQuestion.toString("mm:ss"))
                 
         self.numer_pytania += 1
         self.refresh()
@@ -462,6 +464,7 @@ class VideoWindow(QMainWindow):
             widget.setFixedSize(400, 600)
 
         wyniki.exec_()
+        exit(0)
 
     def play(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
