@@ -50,6 +50,12 @@ class VideoWindow(QMainWindow):
         self.answerButton1 = QCheckBox()
         self.answerButton2 = QCheckBox()
         self.answerButton3 = QCheckBox()
+        self.answerButton1.setFixedWidth(32)
+        self.answerButton2.setFixedWidth(32)
+        self.answerButton3.setFixedWidth(32)
+        self.answerButton1.setFixedHeight(120)
+        self.answerButton2.setFixedHeight(120)
+        self.answerButton3.setFixedHeight(120)
         self.answerButton1.clicked.connect(self.uncheck1)
         self.answerButton2.clicked.connect(self.uncheck2)
         self.answerButton3.clicked.connect(self.uncheck3)
@@ -75,7 +81,38 @@ class VideoWindow(QMainWindow):
         self.nr_pytaniaLabel.setFixedHeight(30)
         self.questionLabel = QLabel(wordWrap=True)
         self.questionLabel.setMinimumHeight(50)
-        self.questionLabel.setMaximumHeight(100)
+        self.questionLabel.setMaximumHeight(1000)
+
+        self.answerLabel1 = QLabel(wordWrap=True)
+        self.answerLabel1.setMinimumHeight(50)
+        self.answerLabel1.setMaximumHeight(150)
+
+        self.answerLabel2 = QLabel(wordWrap=True)
+        self.answerLabel2.setMinimumHeight(50)
+        self.answerLabel2.setMaximumHeight(150)
+
+        self.answerLabel3 = QLabel(wordWrap=True)
+        self.answerLabel3.setMinimumHeight(50)
+        self.answerLabel3.setMaximumHeight(150)
+
+        self.answerButton1.setStyleSheet("""QCheckBox::indicator {width: 32px; height: 32px;
+                                         }
+                                         QCheckBox::indicator:unchecked {image: url(Box.png);
+                                         }
+                                         QCheckBox::indicator:checked {image: url(TickBox.png);
+                                         }""")
+        self.answerButton2.setStyleSheet("""QCheckBox::indicator {width: 32px; height: 32px;
+                                         }
+                                         QCheckBox::indicator:unchecked {image: url(Box.png);
+                                         }
+                                         QCheckBox::indicator:checked {image: url(TickBox.png);
+                                         }""")
+        self.answerButton3.setStyleSheet("""QCheckBox::indicator {width: 32px; height: 32px;
+                                         }
+                                         QCheckBox::indicator:unchecked {image: url(Box.png);
+                                         }
+                                         QCheckBox::indicator:checked {image: url(TickBox.png);
+                                         }""")
 
         font = QFont()
         font2 = QFont()
@@ -88,9 +125,12 @@ class VideoWindow(QMainWindow):
         self.changeModeButton.setFont(font)
         self.questionLabel.setFont(font)
         self.nr_pytaniaLabel.setFont(font2)
-        self.answerButton1.setFont(font)
-        self.answerButton2.setFont(font)
-        self.answerButton3.setFont(font)
+        # self.answerButton1.setFont(font)
+        # self.answerButton2.setFont(font)
+        # self.answerButton3.setFont(font)
+        self.answerLabel1.setFont(font)
+        self.answerLabel2.setFont(font)
+        self.answerLabel3.setFont(font)
 
         self.ilosc_pytan = QLabel()
         self.ilosc_pytan.setAlignment(Qt.AlignCenter)
@@ -154,11 +194,20 @@ class VideoWindow(QMainWindow):
         okLayout.addWidget(self.showAnsButton)
         okLayout.addWidget(self.pytanieCzas)
 
-        answerLayout = QHBoxLayout()
-        answerLayout.setContentsMargins(0, 0, 0, 0)
-        answerLayout.addWidget(self.answerButton1)
-        answerLayout.addWidget(self.answerButton2)
-        answerLayout.addWidget(self.answerButton3)
+        answerLayout1 = QHBoxLayout()
+        answerLayout1.setContentsMargins(0, 0, 0, 0)
+        answerLayout1.addWidget(self.answerButton1)
+        answerLayout1.addWidget(self.answerLabel1)
+
+        answerLayout2 = QHBoxLayout()
+        answerLayout2.setContentsMargins(0, 0, 0, 0)
+        answerLayout2.addWidget(self.answerButton2)
+        answerLayout2.addWidget(self.answerLabel2)
+
+        answerLayout3 = QHBoxLayout()
+        answerLayout3.setContentsMargins(0, 0, 0, 0)
+        answerLayout3.addWidget(self.answerButton3)
+        answerLayout3.addWidget(self.answerLabel3)
 
         endLayout = QHBoxLayout()
         endLayout.addWidget(self.changeModeButton)
@@ -173,9 +222,9 @@ class VideoWindow(QMainWindow):
         layout.addLayout(controlLayout)
         layout.addWidget(self.errorLabel)
         layout.addLayout(okLayout)
-        layout.addWidget(self.answerButton1)
-        layout.addWidget(self.answerButton2)
-        layout.addWidget(self.answerButton3)
+        layout.addLayout(answerLayout1)
+        layout.addLayout(answerLayout2)
+        layout.addLayout(answerLayout3)
         layout.addSpacing(50)
         layout.addLayout(questionLayout)
         
@@ -301,44 +350,19 @@ class VideoWindow(QMainWindow):
         self.answerButton3.setChecked(False)
         if(self.poprawne_odpowiedzi[self.numer_pytania] == "A" or self.poprawne_odpowiedzi[self.numer_pytania] == "Tak"):
             self.answerButton1.setChecked(True)
-            self.answerButton1.setStyleSheet(
-                "QCheckBox::pressed"
-                "{"
-                "background-color : lightgreen;"
-                "}"
-                "QCheckBox::checked"
-                "{"
-                "background-color : lightgreen;"
-                "}"
+            self.answerLabel1.setStyleSheet(
+                "background-color : lightgreen"
             )
         elif(self.poprawne_odpowiedzi[self.numer_pytania] == "B"):
             self.answerButton2.setChecked(True)
-            self.answerButton2.setStyleSheet(
-                "QCheckBox::pressed"
-                "{"
-                "background-color : lightgreen;"
-                "}"
-                "QCheckBox::checked"
-                "{"
-                "background-color : lightgreen;"
-                "}"
+            self.answerLabel2.setStyleSheet(
+                "background-color : lightgreen"
             )
         elif(self.poprawne_odpowiedzi[self.numer_pytania] == "C" or self.poprawne_odpowiedzi[self.numer_pytania] == "Nie"):
             self.answerButton3.setChecked(True)
-            self.answerButton3.setStyleSheet(
-                "QCheckBox::pressed"
-                "{"
-                "background-color : lightgreen;"
-                "}"
-                "QCheckBox::checked"
-                "{"
-                "background-color : lightgreen;"
-                "}"
+            self.answerLabel3.setStyleSheet(
+                "background-color : lightgreen"
             )
-        # ans = QMessageBox()
-        # ans.setWindowTitle("Odpowiedź")
-        # ans.setText(f"Poprawna odpowiedź:\n{self.poprawne_odpowiedzi[self.numer_pytania]}")
-        # ans.exec_()
 
     def refresh(self):
         self.nr_pytaniaLabel.setText(f"Pytanie {self.numer_pytania+1}")
@@ -352,14 +376,16 @@ class VideoWindow(QMainWindow):
         self.odpowiedz_c = str(odpowiedz_c[nr_pytan[self.numer_pytania]]).strip("(),'")
 
         if(self.odpowiedz_a == ''):
-            self.answerButton1.setText("Tak.")
-            self.answerButton3.setText("Nie.")
+            self.answerLabel1.setText("Tak.")
+            self.answerLabel3.setText("Nie.")
             self.answerButton2.setHidden(True)
+            self.answerLabel2.setHidden(True)
         else:
-            self.answerButton1.setText("A: " + self.odpowiedz_a)
-            self.answerButton2.setText("B: " + self.odpowiedz_b)
-            self.answerButton3.setText("C: " + self.odpowiedz_c)
+            self.answerLabel1.setText("A: " + self.odpowiedz_a)
+            self.answerLabel2.setText("B: " + self.odpowiedz_b)
+            self.answerLabel3.setText("C: " + self.odpowiedz_c)
             self.answerButton2.setHidden(False)
+            self.answerLabel2.setHidden(False)
 
         self.questionLabel.setText(self.question)
         
@@ -379,35 +405,14 @@ class VideoWindow(QMainWindow):
         self.answerButton2.adjustSize()
         self.answerButton3.adjustSize()
 
-        self.answerButton1.setStyleSheet(
-                "QCheckBox::pressed"
-                "{"
-                "background-color : lightgray;"
-                "}"
-                "QCheckBox::checked"
-                "{"
-                "background-color : lightgray;"
-                "}"
+        self.answerLabel1.setStyleSheet(
+                "background-color : #f0f0f0"
             )
-        self.answerButton2.setStyleSheet(
-                "QCheckBox::pressed"
-                "{"
-                "background-color : lightgray;"
-                "}"
-                "QCheckBox::checked"
-                "{"
-                "background-color : lightgray;"
-                "}"
+        self.answerLabel2.setStyleSheet(
+                "background-color : #f0f0f0"
             )
-        self.answerButton3.setStyleSheet(
-                "QCheckBox::pressed"
-                "{"
-                "background-color : lightgray;"
-                "}"
-                "QCheckBox::checked"
-                "{"
-                "background-color : lightgray;"
-                "}"
+        self.answerLabel3.setStyleSheet(
+                "background-color : #f0f0f0"
             )
 
         if(self.odpowiedzi_uzytkownika[self.numer_pytania] != ''):
@@ -426,6 +431,11 @@ class VideoWindow(QMainWindow):
         self.openFile()
 
     def show_marks(self):
+        if(self.changeModeButton.isChecked()):
+            self.timer.stop()
+            self.timerGlobal.stop()
+            self.timerQuestion.stop()
+            
         if(self.odpowiedz_a == ''):
             if(self.answerButton1.isChecked()):
                 self.odpowiedzi_uzytkownika[self.numer_pytania] = "Tak"
@@ -438,33 +448,49 @@ class VideoWindow(QMainWindow):
                 self.odpowiedzi_uzytkownika[self.numer_pytania] = "B"
             elif(self.answerButton3.isChecked()):
                 self.odpowiedzi_uzytkownika[self.numer_pytania] = "C"
+
         punkty = 0
         text = ""
+        text_błędne = ""
         for i in range(32):
             text += str(i+1) + "." + " Twoja odpowiedź: "+ str(self.odpowiedzi_uzytkownika[i]) + "\n" + "Poprawna odpowiedź: " + str(self.poprawne_odpowiedzi[i]) + "\n\n"
             if(str(poprawna_odpowiedz[nr_pytan[i]]).strip("(),'") == self.odpowiedzi_uzytkownika[i]):
                 punkty += 1
+            else:
+                text_błędne += str(i+1) + "." + " Twoja odpowiedź: "+ str(self.odpowiedzi_uzytkownika[i]) + "\n" + "Poprawna odpowiedź: " + str(self.poprawne_odpowiedzi[i]) + "\n\n"
 
         wyniki = QMessageBox()
         wyniki.setWindowTitle("Wyniki")
-        # wyniki.setStyleSheet(
-        #     "QLabel{min-width:640 px; font-size: 24px;} "
-        #     "QPushButton{ width:250px; font-size: 18px; } "
-        #     "QTextEdit { font-size: 24pt; min-width:480 px; }"
-        # )
         wyniki.setText(f'{punkty}/32, czyli {float(punkty/32)*100}%')
+
+        wyniki.addButton("OK", QMessageBox.ButtonRole.AcceptRole)
+
+        custom_button = QPushButton("Pokaż błędne")
+        custom_button.setCheckable(True)
 
         font = QFont()
         font.setPointSize(24)
         wyniki.setFont(font)
         wyniki.setDetailedText(text)
 
+        wyniki.addButton(custom_button, QMessageBox.ButtonRole.NoRole)
+        custom_button.disconnect()
+
+        def sprawdz_bledne():
+            if(not custom_button.isChecked()):
+                wyniki.setDetailedText(text_błędne)
+            else:
+                wyniki.setDetailedText(text)
+
+        custom_button.pressed.connect(sprawdz_bledne)
+
         for widget in wyniki.findChildren(QTextEdit):
             widget.setFont(QFont("Arial", 24))  # Set font size
             widget.setFixedSize(400, 600)
 
         wyniki.exec_()
-        exit(0)
+        if(self.changeModeButton.isChecked()):
+            exit(0)
 
     def play(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
