@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
 from PyQt5.QtWidgets import QMainWindow,QWidget, QPushButton, QAction, QMessageBox, QTextEdit
 from PyQt5.QtGui import QIcon, QFont
 import sys
-from prawo_test import pytanie, media, nr_pytan, odpowiedz_a, odpowiedz_b, odpowiedz_c, poprawna_odpowiedz
+from prawo_test import pytanie, media, nr_pytan, odpowiedz_a, odpowiedz_b, odpowiedz_c, poprawna_odpowiedz, wylosowano
 
 class VideoWindow(QMainWindow):
 
@@ -17,6 +17,7 @@ class VideoWindow(QMainWindow):
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
         videoWidget = QVideoWidget()
+        videoWidget.setMinimumHeight(600)
 
         self.numer_pytania = 0
 
@@ -53,9 +54,9 @@ class VideoWindow(QMainWindow):
         self.answerButton1.setFixedWidth(32)
         self.answerButton2.setFixedWidth(32)
         self.answerButton3.setFixedWidth(32)
-        self.answerButton1.setFixedHeight(120)
-        self.answerButton2.setFixedHeight(120)
-        self.answerButton3.setFixedHeight(120)
+        self.answerButton1.setFixedHeight(30)
+        self.answerButton2.setFixedHeight(30)
+        self.answerButton3.setFixedHeight(30)
         self.answerButton1.clicked.connect(self.uncheck1)
         self.answerButton2.clicked.connect(self.uncheck2)
         self.answerButton3.clicked.connect(self.uncheck3)
@@ -79,20 +80,24 @@ class VideoWindow(QMainWindow):
         self.nr_pytaniaLabel = QLabel()
         self.nr_pytaniaLabel.setAlignment(Qt.AlignCenter)
         self.nr_pytaniaLabel.setFixedHeight(30)
+        self.ilosc_wylosowania_pytaniaLabel = QLabel()
+        self.ilosc_wylosowania_pytaniaLabel.setAlignment(Qt.AlignCenter)
+        self.ilosc_wylosowania_pytaniaLabel.setFixedHeight(30)
+
         self.questionLabel = QLabel(wordWrap=True)
         self.questionLabel.setMinimumHeight(50)
         self.questionLabel.setMaximumHeight(1000)
 
         self.answerLabel1 = QLabel(wordWrap=True)
-        self.answerLabel1.setMinimumHeight(50)
+        self.answerLabel1.setMinimumHeight(30)
         self.answerLabel1.setMaximumHeight(150)
 
         self.answerLabel2 = QLabel(wordWrap=True)
-        self.answerLabel2.setMinimumHeight(50)
+        self.answerLabel2.setMinimumHeight(30)
         self.answerLabel2.setMaximumHeight(150)
 
         self.answerLabel3 = QLabel(wordWrap=True)
-        self.answerLabel3.setMinimumHeight(50)
+        self.answerLabel3.setMinimumHeight(30)
         self.answerLabel3.setMaximumHeight(150)
 
         self.answerButton1.setStyleSheet("""QCheckBox::indicator {width: 32px; height: 32px;
@@ -123,14 +128,12 @@ class VideoWindow(QMainWindow):
         self.next_question.setFont(font)
         self.endButton.setFont(font)
         self.changeModeButton.setFont(font)
-        self.questionLabel.setFont(font)
+        self.questionLabel.setFont(font2)
         self.nr_pytaniaLabel.setFont(font2)
-        # self.answerButton1.setFont(font)
-        # self.answerButton2.setFont(font)
-        # self.answerButton3.setFont(font)
-        self.answerLabel1.setFont(font)
-        self.answerLabel2.setFont(font)
-        self.answerLabel3.setFont(font)
+        self.ilosc_wylosowania_pytaniaLabel.setFont(font2)
+        self.answerLabel1.setFont(font2)
+        self.answerLabel2.setFont(font2)
+        self.answerLabel3.setFont(font2)
 
         self.ilosc_pytan = QLabel()
         self.ilosc_pytan.setAlignment(Qt.AlignCenter)
@@ -218,6 +221,7 @@ class VideoWindow(QMainWindow):
         layout.addSpacing(50)
         layout.addWidget(self.globalnyCzas)
         layout.addWidget(self.nr_pytaniaLabel)
+        layout.addWidget(self.ilosc_wylosowania_pytaniaLabel)
         layout.addWidget(videoWidget)
         layout.addLayout(controlLayout)
         layout.addWidget(self.errorLabel)
@@ -292,7 +296,7 @@ class VideoWindow(QMainWindow):
         self.pytanieCzas.setText(self.timeQuestion.toString("mm:ss"))
 
     def previous(self):
-        if(self.odpowiedz_a == ''):
+        if(self.odpowiedz_b == ''):
             if(self.answerButton1.isChecked()):
                 self.odpowiedzi_uzytkownika[self.numer_pytania] = "Tak"
             elif(self.answerButton3.isChecked()):
@@ -309,7 +313,7 @@ class VideoWindow(QMainWindow):
         self.refresh()
 
     def next(self):
-        if(self.odpowiedz_a == ''):
+        if(self.odpowiedz_b == ''):
             if(self.answerButton1.isChecked()):
                 self.odpowiedzi_uzytkownika[self.numer_pytania] = "Tak"
             elif(self.answerButton3.isChecked()):
@@ -366,6 +370,7 @@ class VideoWindow(QMainWindow):
 
     def refresh(self):
         self.nr_pytaniaLabel.setText(f"Pytanie {self.numer_pytania+1}")
+        self.ilosc_wylosowania_pytaniaLabel.setText(f"Pytanie zostało wylosowane {str(wylosowano[nr_pytan[self.numer_pytania]]).strip("(),'")} raz{"y" if str(wylosowano[nr_pytan[self.numer_pytania]]).strip("(),'") != "1" else ""}")
 
         #odmiany
         self.ilosc_pytan.setText(f"Pozostał{"o" if not ((4 >=(31-self.numer_pytania) % 10 >= 2) and not(14 >= 31-self.numer_pytania >= 12)) else "y"} {31-self.numer_pytania} {'pytań' if( (((31-self.numer_pytania) % 10) >= 5 or 1>=(31-self.numer_pytania)%10>=0 or (20>=31-self.numer_pytania >= 10)) and (31-self.numer_pytania != 1)) else "pytania" if(31-self.numer_pytania != 1) else "pytanie"}")
@@ -375,7 +380,7 @@ class VideoWindow(QMainWindow):
         self.odpowiedz_b = str(odpowiedz_b[nr_pytan[self.numer_pytania]]).strip("(),'")
         self.odpowiedz_c = str(odpowiedz_c[nr_pytan[self.numer_pytania]]).strip("(),'")
 
-        if(self.odpowiedz_a == ''):
+        if(self.odpowiedz_b == ''):
             self.answerLabel1.setText("Tak.")
             self.answerLabel3.setText("Nie.")
             self.answerButton2.setHidden(True)
@@ -436,7 +441,7 @@ class VideoWindow(QMainWindow):
             self.timerGlobal.stop()
             self.timerQuestion.stop()
             
-        if(self.odpowiedz_a == ''):
+        if(self.odpowiedz_b == ''):
             if(self.answerButton1.isChecked()):
                 self.odpowiedzi_uzytkownika[self.numer_pytania] = "Tak"
             elif(self.answerButton3.isChecked()):

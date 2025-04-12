@@ -18,6 +18,7 @@ pytanie = []
 media = []
 odpowiedz_a, odpowiedz_b, odpowiedz_c = [],[],[]
 poprawna_odpowiedz = []
+wylosowano = []
 cursor.execute("SELECT Pytanie FROM pytania_egzminacyjne WHERE Kategorie LIKE '%B%' ")
 for question in cursor:
           pytanie.append(question)
@@ -71,5 +72,13 @@ for _ in range(12):
                     else:
                               i = random.randint(0,2017)
           nr_pytan.append(i)
-print(str(media[nr_pytan[0]]).strip("(),'"))
+
+for j in range(len(nr_pytan)):
+          sting = f"UPDATE pytania_egzminacyjne SET Wylosowano = Wylosowano + 1 WHERE Pytanie = {str(pytanie[nr_pytan[j]]).strip("(),")}"
+          cursor.execute(sting)
+          db.commit()
+
+cursor.execute("SELECT Wylosowano FROM pytania_egzminacyjne WHERE Kategorie LIKE '%B%' ")
+for los in cursor:
+          wylosowano.append(los)
 # db.close()
