@@ -236,12 +236,41 @@ class VideoWindow(QMainWindow):
         # Set widget to contain window contents
         wid.setLayout(layout)
 
+        self.answerLabel1.mousePressEvent = self.label_click1
+        self.answerLabel2.mousePressEvent = self.label_click2
+        self.answerLabel3.mousePressEvent = self.label_click3
+
         self.changeModeButton.pressed.connect(self.testMode)
         self.mediaPlayer.setVideoOutput(videoWidget)
         self.mediaPlayer.stateChanged.connect(self.mediaStateChanged)
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
         self.mediaPlayer.error.connect(self.handleError)
+
+    def label_click1(self, *arg, **kwargs):
+        if self.answerButton1.isChecked():
+            self.answerButton1.setChecked(False)
+        else:
+            self.answerButton1.setChecked(True)
+            
+            self.answerButton2.setChecked(False)
+            self.answerButton3.setChecked(False)
+    def label_click2(self, *arg, **kwargs):
+        if self.answerButton2.isChecked():
+            self.answerButton2.setChecked(False)
+        else:
+            self.answerButton2.setChecked(True)
+
+            self.answerButton1.setChecked(False)
+            self.answerButton3.setChecked(False)
+    def label_click3(self, *arg, **kwargs):
+        if self.answerButton3.isChecked():
+            self.answerButton3.setChecked(False)
+        else:
+            self.answerButton3.setChecked(True)
+
+            self.answerButton1.setChecked(False)
+            self.answerButton2.setChecked(False)
 
     def openFile(self):
         if str(media[nr_pytan[self.numer_pytania]]).strip("(),") != '':
