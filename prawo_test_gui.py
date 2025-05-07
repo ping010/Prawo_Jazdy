@@ -22,13 +22,13 @@ class VideoWindow(QMainWindow):
         self.numer_pytania = 0
 
         self.odpowiedzi_uzytkownika = {
-            0 : "", 1 : "", 2 : "", 3 : "", 4 : "", 5 : "", 6 : "", 7 : "", 8 : "", 9 : "", 10 : "", 11 : "", 12 : "", 13 : "", 14 : "", 15 : "", 16 : "", 17 : "", 18 : "", 19 : "",
-            20 : "", 21 : "", 22 : "", 23 : "", 24 : "", 25 : "", 26 : "", 27 : "", 28 : "", 29 : "", 30 : "", 31 : ""
+            0 : "", 1 : "", 2 : "", 3 : "", 4 : "", 5 : "", 6 : "", 7 : "", 8 : "", 9 : "", 10 : "", 11 : "", 12 : "", 13 : "", 14 : "", 15 : "", 
+            16 : "", 17 : "", 18 : "", 19 : "", 20 : "", 21 : "", 22 : "", 23 : "", 24 : "", 25 : "", 26 : "", 27 : "", 28 : "", 29 : "", 30 : "", 31 : ""
         }
 
         self.poprawne_odpowiedzi = {
-            0 : "", 1 : "", 2 : "", 3 : "", 4 : "", 5 : "", 6 : "", 7 : "", 8 : "", 9 : "", 10 : "", 11 : "", 12 : "", 13 : "", 14 : "", 15 : "", 16 : "", 17 : "", 18 : "", 19 : "",
-            20 : "", 21 : "", 22 : "", 23 : "", 24 : "", 25 : "", 26 : "", 27 : "", 28 : "", 29 : "", 30 : "", 31 : ""
+            0 : "", 1 : "", 2 : "", 3 : "", 4 : "", 5 : "", 6 : "", 7 : "", 8 : "", 9 : "", 10 : "", 11 : "", 12 : "", 13 : "", 14 : "", 15 : "", 
+            16 : "", 17 : "", 18 : "", 19 : "", 20 : "", 21 : "", 22 : "", 23 : "", 24 : "", 25 : "", 26 : "", 27 : "", 28 : "", 29 : "", 30 : "", 31 : ""
         }
 
         for i in range(32):
@@ -239,6 +239,7 @@ class VideoWindow(QMainWindow):
         self.answerLabel1.mousePressEvent = self.label_click1
         self.answerLabel2.mousePressEvent = self.label_click2
         self.answerLabel3.mousePressEvent = self.label_click3
+        videoWidget.mousePressEvent = self.video_click
 
         self.changeModeButton.pressed.connect(self.testMode)
         self.mediaPlayer.setVideoOutput(videoWidget)
@@ -271,6 +272,9 @@ class VideoWindow(QMainWindow):
 
             self.answerButton1.setChecked(False)
             self.answerButton2.setChecked(False)
+
+    def video_click(self, *arg, **kwargs):
+        self.play()
 
     def openFile(self):
         if str(media[nr_pytan[self.numer_pytania]]).strip("(),") != '':
